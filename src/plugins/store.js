@@ -6,6 +6,8 @@ import debounce from 'just-debounce'
 const host = MQTT_SERVER
 const port = '9001'
 const client  = mqtt.connect(`mqtt://${host}:${port}`, { keepalive: 60, connectTimeout: 60000 })
+const anaviTemperatureTopic = `${ANAVI_MQTT_PREFIX}/air/temperature`
+const anaviHumidityTopic    = `${ANAVI_MQTT_PREFIX}/air/humidity`
 
 Vue.use(Vuex)
 
@@ -17,6 +19,8 @@ export default new Vuex.Store({
     currentPressure: '--',
     currentTemperature: 0,
     hysteresis: 0,
+    anaviTemperature: 0,
+    anaviHumidity: 0,
     modes: {
       // Some terminology clarification on mode states:
       // active: on, but not necessarily running
@@ -250,7 +254,15 @@ function mqttClientPlugin(store) {
         }
         store.state.showHeating = true
       }
-    }
+    },
+    // ANAVI Thermometer
+    [anaviTemperatureTopic]: message => {
+      store.state.anaviTemperature = parseFloat(JSON.parse(message).temperature).toFixed(1)
+    },
+    [anaviHumidityTopic]: message => {
+      store.state.anaviHumidity = parseInt(JSON.parse(message).humidity)
+    },
+
   }
 
   client.on('connect', () => {
@@ -300,7 +312,9 @@ function mqttClientPlugin(store) {
         'hestia/heatingboostremtime',
         'hestia/coolingboostremtime',
         'hestia/humidityboostremtime',
-        'hestia/hotwaterboostremtime'
+        'hestia/hotwaterboostremtime',
+        anaviTemperatureTopic,
+        anaviHumidityTopic
       ],
       (error) => {
         if (error) {

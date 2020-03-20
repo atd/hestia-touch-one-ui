@@ -4,7 +4,8 @@ module.exports = {
   configureWebpack: {
     plugins: [
       new webpack.DefinePlugin({
-        MQTT_SERVER: JSON.stringify(process.env.MQTT_SERVER || 'localhost')
+        MQTT_SERVER: JSON.stringify(process.env.MQTT_SERVER || 'localhost'),
+        ANAVI_MQTT_PREFIX: JSON.stringify(process.env.ANAVI_MQTT_PREFIX || '')
       })
     ]
   },
