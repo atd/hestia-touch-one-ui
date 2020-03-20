@@ -218,8 +218,8 @@ function mqttClientPlugin(store) {
         store.state.showCooling = false
 
         store.state.showHeating = true
-        store.state.showHumidity = true
-        store.state.showHotWater = true
+        store.state.showHumidity = false
+        store.state.showHotWater = false
       }
     },
     'hestia/local/season': message => {
