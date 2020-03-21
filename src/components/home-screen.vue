@@ -64,25 +64,39 @@
     </div>
     <div class="grid">
       <!-- row -->
+      <div class="anavi-row color-off">
+        <div class="anavi-temp unselectable">
+          {{ anaviTemperature }}<span class="symbol">°</span>
+        </div>
+        <div class="anavi-humidity unselectable">
+          {{ anaviHumidity }}<span class="symbol">%</span>
+        </div>
+        <div class="anavi-button thermometer-switch unselectable">
+          Habitación
+        </div>
+      </div>
+
+      <!-- row -->
+      <div class="current-row">
+        <div class="current-temp unselectable">
+          {{ currentTemperature }}<span class="symbol">°</span>
+        </div>
+        <div class="current-humidity unselectable">
+          {{ currentHumidity }}<span class="symbol">%</span>
+        </div>
+        <div class="current-button thermometer-switch unselectable">
+          Salón
+        </div>
+      </div>
+
+      <!-- row -->
       <div class="active-temp unselectable" v-html="targetTemperature">
       </div>
-      <div class="grid-home-icon unselectable">
-        <icon-home size="100%" />
-      </div>
-      <div class="current-temp unselectable">
-        {{ currentTemperature }}<span class="symbol">°</span>
-      </div>
-      <!-- row -->
       <div v-if="showControls" class="value-controls unselectable">
         <div class="decrement" @click="decrement">-</div>
         <div class="increment" @click="increment">+</div>
       </div>
-      <div class="grid-humidity-icon">
-        <icon-humidity size="100%" />
-      </div>
-      <div class="current-humidity unselectable">
-        {{ currentHumidity }}<span class="symbol">%</span>
-      </div>
+
     </div>
     <div class="bottom-container">
       <div class="power-setting-text">{{ powerSettingText }}</div>
@@ -100,7 +114,6 @@ import powerSettingsModal from './power-settings-modal.vue'
 import iconCool from './icon-cool.vue'
 import iconHeat from './icon-heat.vue'
 import iconHeat2 from './icon-heat2.vue'
-import iconHome from './icon-home.vue'
 import iconFan from './icon-fan.vue'
 import iconHumidity from './icon-humidity.vue'
 import iconHotwater from './icon-hotwater.vue'
@@ -121,7 +134,6 @@ export default {
     iconFan,
     iconHeat,
     iconHeat2,
-    iconHome,
     iconHumidity,
     iconHotwater,
     iconInfo,
@@ -143,7 +155,9 @@ export default {
       'showFan',
       'showHeating',
       'showHotWater',
-      'showHumidity'
+      'showHumidity',
+      'anaviTemperature',
+      'anaviHumidity'
     ]),
     powerSettingText() {
       const modes = {
@@ -223,11 +237,12 @@ export default {
 }
 
 .active-temp {
-  font-size: 30vh;
-  left: 2%;
+  font-size: 27vh;
+  left: 5%;
   line-height: 100%;
-  top: 29%;
-  width: 50vw;
+  bottom: 9%;
+  width: 40vw;
+  text-align: left;
 }
 
 .active-temp > .symbol {
@@ -238,7 +253,7 @@ export default {
 .bottom-container {
   bottom: 0;
   height: 8vh;
-  left: 4%;
+  left: 5%;
   position: absolute;
   text-align: left;
   width: 100%;
@@ -256,29 +271,98 @@ export default {
   right: 6%;
 }
 
+.current-row {
+  position: absolute;
+  top: 45%;
+  width: 100%;
+  left: 0;
+}
+
+.current-row > div {
+  position: absolute;
+}
+
 .current-temp {
-  font-size: 24vh;
-  right: 8%;
-  text-align: right;
-  top: 30%;
-  width: 40%;
+  font-size: 14vh;
+  left: 5%;
+  text-align: left;
+  top: 45%;
+  width: 30%;
 }
 
 .current-temp > .symbol {
+  font-size: 12vh;
+  vertical-align: text-top;
+}
+
+.anavi-row {
+  position: absolute;
+  top: 28%;
+  width: 100%;
+  left: 0;
+}
+
+.anavi-row > div {
+  position: absolute;
+}
+
+.anavi-temp {
   font-size: 14vh;
+  left: 5%;
+  text-align: left;
+  top: 28%;
+  width: 30%;
+}
+
+.anavi-temp > .symbol {
+  font-size: 12vh;
   vertical-align: text-top;
 }
 
 .current-humidity {
-  bottom: 8%;
-  font-size: 24vh;
-  right: 6.5%;
+  top: 45%;
+  font-size: 14vh;
+  left: 18%;
   text-align: right;
-  width: 40%;
+  width: 30%;
+}
+
+.current-button {
+  top: 28%;
+  right: 5%;
 }
 
 .current-humidity > .symbol {
   font-size: 10vh;
+}
+
+.anavi-humidity {
+  top: 28%;
+  font-size: 14vh;
+  left: 18%;
+  text-align: right;
+  width: 30%;
+}
+
+.anavi-humidity > .symbol {
+  font-size: 10vh;
+}
+
+.anavi-button {
+  top: 45%;
+  right: 5%;
+}
+
+.thermometer-switch {
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 8vh;
+  width: 40%;
+  height: 12vh;
+  line-height: 12vh;
+  margin-top: 2vh;
 }
 
 .grid {
@@ -331,13 +415,12 @@ export default {
 
 .mode-btn.info {
   position: absolute;
-  right: 0.5%;
+  right: 3%;
 }
 
 .top-container {
   color: #e0e5e8;
   height: 25%;
-  left: 0;
   max-height: 25%;
   position: absolute;
   top: 0;
@@ -345,10 +428,10 @@ export default {
 }
 
 .value-controls {
-  bottom: 0;
-  height: 50vh;
-  width: 50vw;
-  left: 2%;
+  bottom: 7%;
+  height: 13vh;
+  width: 41vw;
+  right: 5%;
 }
 
 .value-controls > div {
