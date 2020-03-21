@@ -64,7 +64,10 @@
     </div>
     <div class="grid">
       <!-- row -->
-      <div class="anavi-row color-off">
+      <div class="anavi-row"
+        :class="{
+          'color-off': thermometerSwitch !== 'Anavi'
+        }">
         <div class="anavi-temp unselectable">
           {{ anaviTemperature }}<span class="symbol">°</span>
         </div>
@@ -77,7 +80,10 @@
       </div>
 
       <!-- row -->
-      <div class="current-row">
+      <div class="current-row"
+        :class="{
+          'color-off': thermometerSwitch !== 'My'
+        }">
         <div class="current-temp unselectable">
           {{ currentTemperature }}<span class="symbol">°</span>
         </div>
@@ -157,7 +163,8 @@ export default {
       'showHotWater',
       'showHumidity',
       'anaviTemperature',
-      'anaviHumidity'
+      'anaviHumidity',
+      'thermometerSwitch'
     ]),
     powerSettingText() {
       const modes = {

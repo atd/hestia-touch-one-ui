@@ -8,6 +8,7 @@ const port = '9001'
 const client  = mqtt.connect(`mqtt://${host}:${port}`, { keepalive: 60, connectTimeout: 60000 })
 const anaviTemperatureTopic = `${ANAVI_MQTT_PREFIX}/air/temperature`
 const anaviHumidityTopic    = `${ANAVI_MQTT_PREFIX}/air/humidity`
+const thermometerSwitchTopic = 'hestia/local/stat/thermometerswitch'
 
 Vue.use(Vuex)
 
@@ -21,6 +22,7 @@ export default new Vuex.Store({
     hysteresis: 0,
     anaviTemperature: 0,
     anaviHumidity: 0,
+    thermometerSwitch: '--',
     modes: {
       // Some terminology clarification on mode states:
       // active: on, but not necessarily running
@@ -262,7 +264,9 @@ function mqttClientPlugin(store) {
     [anaviHumidityTopic]: message => {
       store.state.anaviHumidity = parseInt(JSON.parse(message).humidity)
     },
-
+    [thermometerSwitchTopic]: message => {
+      store.state.thermometerSwitch = message
+    }
   }
 
   client.on('connect', () => {
@@ -313,6 +317,7 @@ function mqttClientPlugin(store) {
         'hestia/coolingboostremtime',
         'hestia/humidityboostremtime',
         'hestia/hotwaterboostremtime',
+        thermometerSwitchTopic,
         anaviTemperatureTopic,
         anaviHumidityTopic
       ],
