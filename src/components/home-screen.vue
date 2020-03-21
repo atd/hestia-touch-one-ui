@@ -74,7 +74,8 @@
         <div class="anavi-humidity unselectable">
           {{ anaviHumidity }}<span class="symbol">%</span>
         </div>
-        <div class="anavi-button thermometer-switch unselectable">
+        <div class="anavi-button thermometer-switch unselectable"
+          @click="selectThermometer('Anavi')">
           Habitación
         </div>
       </div>
@@ -90,7 +91,8 @@
         <div class="current-humidity unselectable">
           {{ currentHumidity }}<span class="symbol">%</span>
         </div>
-        <div class="current-button thermometer-switch unselectable">
+        <div class="current-button thermometer-switch unselectable"
+          @click="selectThermometer('My')">
           Salón
         </div>
       </div>
@@ -222,6 +224,9 @@ export default {
     },
     toggleInfoScreen() {
       this.$store.commit('toggleInfoScreen')
+    },
+    selectThermometer(thermometer) {
+      this.$store.commit('selectThermometer', thermometer)
     }
   }
 }

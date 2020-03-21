@@ -101,7 +101,8 @@ export default new Vuex.Store({
     incrementTargetValue,
     selectMode,
     selectPowerSetting,
-    toggleInfoScreen
+    toggleInfoScreen,
+    selectThermometer
   }
 })
 
@@ -464,4 +465,8 @@ function updateMode(state, mode) {
       modeState.boostEnabled = false
     }
   }
+}
+
+function selectThermometer(state, thermometer) {
+  client.publish(thermometerSwitchTopic, thermometer)
 }
