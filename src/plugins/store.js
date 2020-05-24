@@ -63,6 +63,9 @@ export default new Vuex.Store({
         running: false,
         setValue: 50,
         stepSize: 1
+      },
+      'roller-shutters': {
+        active: false
       }
     },
     info: {
@@ -85,7 +88,8 @@ export default new Vuex.Store({
     showHeating: false,
     showFan: false,
     showHumidity: false,
-    showHotWater: false
+    showHotWater: false,
+    showRollerShutters: true
   },
   getters: {
     targetTemperature
