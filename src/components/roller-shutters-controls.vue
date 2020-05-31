@@ -1,13 +1,19 @@
 <template>
   <div class="grid roller-shutters-grid">
     <div class="roller-shutters-container">
-      <div class="roller-shutter roller-shutter-left">
+      <div class="roller-shutter roller-shutter-left"
+        data-label="left"
+        @click="update">
         <div class="roller-shutter-holes" :style="{ height: shutterHeight('left')}"></div>
       </div>
-      <div class="roller-shutter roller-shutter-middle">
+      <div class="roller-shutter roller-shutter-middle"
+        data-label="middle"
+        @click="update">
         <div class="roller-shutter-holes" :style="{ height: shutterHeight('middle')}"></div>
       </div>
-      <div class="roller-shutter roller-shutter-right">
+      <div class="roller-shutter roller-shutter-right"
+        data-label="right"
+        @click="update">
         <div class="roller-shutter-holes" :style="{ height: shutterHeight('right')}"></div>
       </div>
     </div>
@@ -26,6 +32,13 @@ export default {
     ])
   },
   methods: {
+    update(event) {
+      const label = event.target.getAttribute('data-label') ||
+                    event.target.parentElement.getAttribute('data-label')
+      const height = event.layerY
+
+      this.$store.commit('updateRollerShutter', { label, height })
+    }
   }
 }
 </script>

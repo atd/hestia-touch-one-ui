@@ -107,7 +107,8 @@ export default new Vuex.Store({
     incrementTargetValue,
     selectMode,
     selectPowerSetting,
-    toggleInfoScreen
+    toggleInfoScreen,
+    updateRollerShutter
   }
 })
 
@@ -475,4 +476,10 @@ function updateMode(state, mode) {
       modeState.boostEnabled = false
     }
   }
+}
+
+function updateRollerShutter(state, {label, height}) {
+  const position = Math.floor(height * 100 / ShutterDisplayHeight)
+
+  client.publish(`ew/cmnd/${label}`, position.toString())
 }
