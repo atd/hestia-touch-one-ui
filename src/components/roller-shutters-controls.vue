@@ -1,19 +1,29 @@
 <template>
   <div class="grid roller-shutters-grid">
     <div class="roller-shutters-container">
-      <div class="roller-shutter roller-shutter-left"></div>
-      <div class="roller-shutter roller-shutter-middle"></div>
-      <div class="roller-shutter roller-shutter-right"></div>
+      <div class="roller-shutter roller-shutter-left">
+        <div class="roller-shutter-holes" :style="{ height: shutterHeight('left')}"></div>
+      </div>
+      <div class="roller-shutter roller-shutter-middle">
+        <div class="roller-shutter-holes" :style="{ height: shutterHeight('middle')}"></div>
+      </div>
+      <div class="roller-shutter roller-shutter-right">
+        <div class="roller-shutter-holes" :style="{ height: shutterHeight('right')}"></div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
   },
   computed: {
+    ...mapGetters([
+      'shutterHeight'
+    ])
   },
   methods: {
   }
@@ -31,7 +41,7 @@ export default {
   .roller-shutter {
     position: absolute;
     height: 210px;
-    background-color: #B17136;
+    background-color: #e0e5e8;
   }
 
   .roller-shutter-left {
@@ -46,5 +56,11 @@ export default {
   .roller-shutter-right {
     width: 105px;
     right: 3%;
+  }
+
+  .roller-shutter-holes {
+    background-image: linear-gradient(to bottom, #000, #000 90%, transparent 90%, transparent 100%), linear-gradient(90deg, #000, #000 60%, #e0e5e8 60%, #e0e5e8 100%);
+    background-size: 100% 20px, 20px 3px;
+    transform: scaleY(-1);
   }
 </style>

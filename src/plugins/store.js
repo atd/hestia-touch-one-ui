@@ -7,6 +7,8 @@ const host = MQTT_SERVER
 const port = '9001'
 const client  = mqtt.connect(`mqtt://${host}:${port}`, { keepalive: 60, connectTimeout: 60000 })
 
+const ShutterDisplayHeight = 210 // The height of the shutter divs in pixels
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -89,10 +91,16 @@ export default new Vuex.Store({
     showFan: false,
     showHumidity: false,
     showHotWater: false,
-    showRollerShutters: true
+    showRollerShutters: true,
+    rollerShutters: {
+      left: 50,
+      middle: 70,
+      right: 30
+    }
   },
   getters: {
-    targetTemperature
+    targetTemperature,
+    shutterHeight
   },
   mutations: {
     decrementTargetValue,
@@ -254,6 +262,15 @@ function mqttClientPlugin(store) {
         }
         store.state.showHeating = true
       }
+    },
+    'ew/stat/left': message => {
+      store.state.rollerShutters.left = message
+    },
+    'ew/stat/middle': message => {
+      store.state.rollerShutters.middle = message
+    },
+    'ew/stat/right': message => {
+      store.state.rollerShutters.right = message
     }
   }
 
@@ -304,7 +321,10 @@ function mqttClientPlugin(store) {
         'hestia/heatingboostremtime',
         'hestia/coolingboostremtime',
         'hestia/humidityboostremtime',
-        'hestia/hotwaterboostremtime'
+        'hestia/hotwaterboostremtime',
+        'ew/stat/left',
+        'ew/stat/middle',
+        'ew/stat/right'
       ],
       (error) => {
         if (error) {
@@ -361,6 +381,12 @@ function targetTemperature(state) {
     }
   }
   return 'Off'
+}
+
+function shutterHeight(state) {
+  return function(shutter) {
+    return `${state.rollerShutters[shutter] * ShutterDisplayHeight / 100}px`
+  }
 }
 
 //
