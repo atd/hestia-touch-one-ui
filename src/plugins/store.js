@@ -93,9 +93,9 @@ export default new Vuex.Store({
     showHotWater: false,
     showRollerShutters: true,
     rollerShutters: {
-      left: 50,
-      middle: 70,
-      right: 30
+      left: 0,
+      middle: 0,
+      right: 0
     }
   },
   getters: {
