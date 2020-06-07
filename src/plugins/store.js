@@ -386,7 +386,7 @@ function targetTemperature(state) {
 
 function shutterHeight(state) {
   return function(shutter) {
-    return `${state.rollerShutters[shutter] * ShutterDisplayHeight / 100}px`
+    return `${Math.round(state.rollerShutters[shutter] * ShutterDisplayHeight / 100)}px`
   }
 }
 
@@ -479,7 +479,7 @@ function updateMode(state, mode) {
 }
 
 function updateRollerShutter(state, {label, height}) {
-  const position = Math.floor(height * 100 / ShutterDisplayHeight)
+  const position = Math.round(height * 100 / (ShutterDisplayHeight - 1))
 
   client.publish(`ew/cmnd/${label}`, position.toString())
 }
