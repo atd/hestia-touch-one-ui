@@ -4,17 +4,20 @@
       <div class="roller-shutter-window roller-shutter-window-left"
         data-label="left"
         @click="update">
-        <div class="roller-shutter" :style="{ height: shutterHeight('left')}"></div>
+        <div class="roller-shutter" :style="{ height: shutterHeight('left')}"
+          @click="update"></div>
       </div>
       <div class="roller-shutter-window roller-shutter-window-middle"
         data-label="middle"
         @click="update">
-        <div class="roller-shutter" :style="{ height: shutterHeight('middle')}"></div>
+        <div class="roller-shutter" :style="{ height: shutterHeight('middle')}"
+          @click="update"></div>
       </div>
       <div class="roller-shutter-window roller-shutter-window-right"
         data-label="right"
         @click="update">
-        <div class="roller-shutter" :style="{ height: shutterHeight('right')}"></div>
+        <div class="roller-shutter" :style="{ height: shutterHeight('right')}"
+          @click="update"></div>
       </div>
     </div>
   </div>
@@ -33,6 +36,11 @@ export default {
   },
   methods: {
     update(event) {
+      // HestiaPi's kweb browser does not propagate click events,
+      // (or at least, they don't reach Vue)
+      // so we have to set the trigger in both divs
+      event.stopPropagation()
+
       const label = event.target.getAttribute('data-label') ||
                     event.target.parentElement.getAttribute('data-label')
       const height = event.layerY
