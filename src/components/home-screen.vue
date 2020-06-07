@@ -94,7 +94,7 @@
       </div>
     </div>
     <roller-shutters-controls v-if="showRollerShuttersControls" />
-    <div class="bottom-container" v-if="!showTemperatureControls">
+    <div class="bottom-container" v-if="showTemperatureControls">
       <div class="power-setting-text">{{ powerSettingText }}</div>
       <div class="comfort-mode">
         <span v-if="comfortMode">Comfort mode</span>
