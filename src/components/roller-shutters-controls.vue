@@ -72,7 +72,7 @@ export default {
   }
 
   .roller-shutter {
-    background-image: linear-gradient(to bottom, #000, #000 90%, transparent 90%, transparent 100%), linear-gradient(90deg, #000, #000 60%, #e0e5e8 60%, #e0e5e8 100%);
+    background-image: linear-gradient(to bottom, #4C331E, #4C331E 90%, transparent 90%, transparent 100%), linear-gradient(90deg, #4C331E, #4C331E 60%, #e0e5e8 60%, #e0e5e8 100%);
     background-size: 100% 20px, 20px 3px;
     transform: scaleY(-1);
   }
