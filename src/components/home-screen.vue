@@ -109,8 +109,8 @@
     <div class="bottom-container">
       <div class="power-setting-text">{{ powerSettingText }}</div>
       <div class="comfort-mode">
-        <span v-if="comfortMode">Comfort mode</span>
-        <span v-else>Comfort range: &plusmn;{{ hysteresis }}&deg;</span>
+        <span v-if="comfortMode">Modo confort</span>
+        <span v-else>Rango de confort: &plusmn;{{ hysteresis }}&deg;</span>
       </div>
     </div>
   </div>
@@ -171,7 +171,7 @@ export default {
     powerSettingText() {
       const modes = {
         cool: () => 'Cooling',
-        heat: () => this.modes.heat2.running ? '2nd-stage heating' : 'Heating',
+        heat: () => this.modes.heat2.running ? '2nd-stage heating' : 'Calefacción',
         hotwater: () => 'Hot water',
         humidity: () => 'Humidity control',
         fan: () => 'Fan'
