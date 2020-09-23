@@ -280,7 +280,7 @@ export default {
   display: inline;
   float: right;
   position: relative;
-  right: 6%;
+  right: 10%;
 }
 
 .current-row {
