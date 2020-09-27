@@ -6,15 +6,23 @@ import debounce from 'just-debounce'
 const host = MQTT_SERVER
 const port = '9001'
 const client  = mqtt.connect(`mqtt://${host}:${port}`, { keepalive: 60, connectTimeout: 60000 })
+const anaviTemperatureTopic = `${ANAVI_MQTT_PREFIX}/air/temperature`
+const anaviHumidityTopic    = `${ANAVI_MQTT_PREFIX}/air/humidity`
+const thermometerSwitchTopic = 'hestia/local/stat/thermometerswitch'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   plugins: [mqttClientPlugin],
   state: {
+    comfortMode: true,
     currentHumidity: 0,
     currentPressure: '--',
     currentTemperature: 0,
+    hysteresis: 0,
+    anaviTemperature: 0,
+    anaviHumidity: 0,
+    thermometerSwitch: '--',
     modes: {
       // Some terminology clarification on mode states:
       // active: on, but not necessarily running
@@ -93,7 +101,8 @@ export default new Vuex.Store({
     incrementTargetValue,
     selectMode,
     selectPowerSetting,
-    toggleInfoScreen
+    toggleInfoScreen,
+    selectThermometer
   }
 })
 
@@ -112,6 +121,12 @@ function mqttClientPlugin(store) {
     //
     // Power-setting topics
     //
+    'hestia/local/comfortmode': message => {
+      store.state.comfortMode = message !== 'ECO'
+    },
+    'hestia/local/hysteresis': message => {
+      store.state.hysteresis = Number(message)
+    },
     'hestia/local/cmnd/coolingstate/POWER': message => {
       store.state.modes.cool.running = message === 'ON'
     },
@@ -155,9 +170,11 @@ function mqttClientPlugin(store) {
         store.state.currentTemperature = parseInt(message)
       }
     },
-    'hestia/local/tempsetpoint': message => {
-      store.state.modes.heat.setValue = parseFloat(message)
+    'hestia/local/maxtempsetpoint': message => {
       store.state.modes.cool.setValue = parseFloat(message)
+    },
+    'hestia/local/mintempsetpoint': message => {
+      store.state.modes.heat.setValue = parseFloat(message)
     },
     'hestia/local/humidity': message => {
       store.state.currentHumidity = parseInt(message)
@@ -168,6 +185,9 @@ function mqttClientPlugin(store) {
     'hestia/local/pressure': message => {
       store.state.currentPressure = message
     },
+    //
+    // System topics
+    //
     'hestia/local/wanip': message => {
       store.state.info.wanip = message
     },
@@ -237,6 +257,16 @@ function mqttClientPlugin(store) {
         }
         store.state.showHeating = true
       }
+    },
+    // ANAVI Thermometer
+    [anaviTemperatureTopic]: message => {
+      store.state.anaviTemperature = parseFloat(JSON.parse(message).temperature).toFixed(1)
+    },
+    [anaviHumidityTopic]: message => {
+      store.state.anaviHumidity = parseInt(JSON.parse(message).humidity)
+    },
+    [thermometerSwitchTopic]: message => {
+      store.state.thermometerSwitch = message
     }
   }
 
@@ -244,22 +274,33 @@ function mqttClientPlugin(store) {
     console.debug('WS connected to: '+host)
     client.subscribe(
       [
+        // Comfort
+        'hestia/local/comfortmode',
+        'hestia/local/hysteresis',
+        // Heating
         'hestia/local/cmnd/heatingmode',
         'hestia/local/cmnd/heatingstate/POWER',
         'hestia/local/cmnd/heating2state/POWER',
+        'hestia/local/mintempsetpoint',
+        // Cooling
         'hestia/local/cmnd/coolingmode',
         'hestia/local/cmnd/coolingstate/POWER',
+        'hestia/local/maxtempsetpoint',
+        // Fan
         'hestia/local/cmnd/fanmode',
         'hestia/local/cmnd/fanstate/POWER',
+        // Hot water
         'hestia/local/cmnd/hotwatermode',
         'hestia/local/cmnd/hotwaterstate/POWER',
+        // Humidity
         'hestia/local/cmnd/humiditymode',
         'hestia/local/cmnd/humiditystate/POWER',
+        // Sensor metrics
         'hestia/local/temperature',
-        'hestia/local/tempsetpoint',
         'hestia/local/humidity',
         'hestia/local/humisetpoint',
-        'hestia/local/pressure',
+        //'hestia/local/pressure', // Currently unused
+        // System settings
         'hestia/local/wanip',
         'hestia/local/wlanip',
         'hestia/local/ssid',
@@ -268,6 +309,7 @@ function mqttClientPlugin(store) {
         'hestia/local/cputemp',
         'hestia/local/cpuload',
         'hestia/local/useddisk',
+        // Unit settings
         'hestia/local/tempunit',
         'hestia/local/systemtype',
         'hestia/local/season',
@@ -275,7 +317,10 @@ function mqttClientPlugin(store) {
         'hestia/heatingboostremtime',
         'hestia/coolingboostremtime',
         'hestia/humidityboostremtime',
-        'hestia/hotwaterboostremtime'
+        'hestia/hotwaterboostremtime',
+        thermometerSwitchTopic,
+        anaviTemperatureTopic,
+        anaviHumidityTopic
       ],
       (error) => {
         if (error) {
@@ -345,8 +390,8 @@ function targetTemperature(state) {
 // that the new humidity setpoint is 54 and none of the in-between settings.
 const publishTargetValue = debounce((state, mode, value) => {
   const topics = {
-    cool: 'hestia/local/settempsetpoint',
-    heat: 'hestia/local/settempsetpoint',
+    cool: 'hestia/local/cmnd/setmaxtempsetpoint',
+    heat: 'hestia/local/cmnd/setmintempsetpoint',
     humidity: 'hestia/local/sethumisetpoint'
   }
 
@@ -420,4 +465,8 @@ function updateMode(state, mode) {
       modeState.boostEnabled = false
     }
   }
+}
+
+function selectThermometer(state, thermometer) {
+  client.publish(thermometerSwitchTopic, thermometer)
 }
