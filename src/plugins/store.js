@@ -163,7 +163,7 @@ function mqttClientPlugin(store) {
     //
     // Status topics
     //
-    'hestia/local/temperature': message => {
+    'hestia/local/localtemperature': message => {
       if (store.state.info.tempunit === 'C') {
         store.state.currentTemperature = message
       } else {
@@ -176,7 +176,7 @@ function mqttClientPlugin(store) {
     'hestia/local/mintempsetpoint': message => {
       store.state.modes.heat.setValue = parseFloat(message)
     },
-    'hestia/local/humidity': message => {
+    'hestia/local/localhumidity': message => {
       store.state.currentHumidity = parseInt(message)
     },
     'hestia/local/humisetpoint': message => {
@@ -296,8 +296,8 @@ function mqttClientPlugin(store) {
         'hestia/local/cmnd/humiditymode',
         'hestia/local/cmnd/humiditystate/POWER',
         // Sensor metrics
-        'hestia/local/temperature',
-        'hestia/local/humidity',
+        'hestia/local/localtemperature',
+        'hestia/local/localhumidity',
         'hestia/local/humisetpoint',
         //'hestia/local/pressure', // Currently unused
         // System settings
