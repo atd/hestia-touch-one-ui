@@ -10,6 +10,8 @@ const anaviTemperatureTopic = `${ANAVI_MQTT_PREFIX}/air/temperature`
 const anaviHumidityTopic    = `${ANAVI_MQTT_PREFIX}/air/humidity`
 const thermometerSwitchTopic = 'hestia/local/stat/thermometerswitch'
 
+const ShutterDisplayHeight = 210 // The height of the shutter divs in pixels
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -69,6 +71,9 @@ export default new Vuex.Store({
         running: false,
         setValue: 50,
         stepSize: 1
+      },
+      'roller-shutters': {
+        active: false
       }
     },
     info: {
@@ -91,10 +96,17 @@ export default new Vuex.Store({
     showHeating: false,
     showFan: false,
     showHumidity: false,
-    showHotWater: false
+    showHotWater: false,
+    showRollerShutters: true,
+    rollerShutters: {
+      left: 0,
+      middle: 0,
+      right: 0
+    }
   },
   getters: {
-    targetTemperature
+    targetTemperature,
+    shutterHeight
   },
   mutations: {
     decrementTargetValue,
@@ -102,7 +114,8 @@ export default new Vuex.Store({
     selectMode,
     selectPowerSetting,
     toggleInfoScreen,
-    selectThermometer
+    selectThermometer,
+    updateRollerShutter
   }
 })
 
@@ -267,6 +280,15 @@ function mqttClientPlugin(store) {
     },
     [thermometerSwitchTopic]: message => {
       store.state.thermometerSwitch = message
+    },
+    'ew/stat/left': message => {
+      store.state.rollerShutters.left = message
+    },
+    'ew/stat/middle': message => {
+      store.state.rollerShutters.middle = message
+    },
+    'ew/stat/right': message => {
+      store.state.rollerShutters.right = message
     }
   }
 
@@ -320,7 +342,10 @@ function mqttClientPlugin(store) {
         'hestia/hotwaterboostremtime',
         thermometerSwitchTopic,
         anaviTemperatureTopic,
-        anaviHumidityTopic
+        anaviHumidityTopic,
+        'ew/stat/left',
+        'ew/stat/middle',
+        'ew/stat/right'
       ],
       (error) => {
         if (error) {
@@ -377,6 +402,12 @@ function targetTemperature(state) {
     }
   }
   return 'Off'
+}
+
+function shutterHeight(state) {
+  return function(shutter) {
+    return `${Math.round(state.rollerShutters[shutter] * ShutterDisplayHeight / 100)}px`
+  }
 }
 
 //
@@ -469,4 +500,10 @@ function updateMode(state, mode) {
 
 function selectThermometer(state, thermometer) {
   client.publish(thermometerSwitchTopic, thermometer)
+}
+
+function updateRollerShutter(state, {label, height}) {
+  const position = Math.round(height * 100 / (ShutterDisplayHeight - 1))
+
+  client.publish(`ew/cmnd/${label}`, position.toString())
 }

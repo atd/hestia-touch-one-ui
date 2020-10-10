@@ -76,6 +76,10 @@ html {
   color: aqua;
 }
 
+.color-roller-shutters {
+  color: #4C331E;
+}
+
 .color-off {
   color: #e0e5e8;
 }

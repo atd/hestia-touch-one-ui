@@ -58,11 +58,20 @@
         @click="openPowerModal('hotwater')">
         <icon-hotwater size="70%" />
       </div>
+      <div v-if="showRollerShutters"
+        class="mode-btn roller-shutters"
+        :class="{
+          'color-roller-shutters': selectedMode === 'roller-shutters',
+          'color-off': selectedMode !== 'roller-shutters'
+        }"
+        @click="select('roller-shutters')">
+        <icon-roller-shutters size="70%" />
+      </div>
       <div class="mode-btn info color-off" @click="toggleInfoScreen">
         <icon-info size="75%" />
       </div>
     </div>
-    <div class="grid">
+    <div class="grid" v-if="showTemperatureControls">
       <!-- row -->
       <div class="anavi-row"
         :class="{
@@ -106,7 +115,8 @@
       </div>
 
     </div>
-    <div class="bottom-container">
+    <roller-shutters-controls v-if="showRollerShuttersControls" />
+    <div class="bottom-container" v-if="showTemperatureControls">
       <div class="power-setting-text">{{ powerSettingText }}</div>
       <div class="comfort-mode">
         <span v-if="comfortMode">Modo confort</span>
@@ -125,7 +135,9 @@ import iconHeat2 from './icon-heat2.vue'
 import iconFan from './icon-fan.vue'
 import iconHumidity from './icon-humidity.vue'
 import iconHotwater from './icon-hotwater.vue'
+import iconRollerShutters from './icon-roller-shutters.vue'
 import iconInfo from './icon-info.vue'
+import rollerShuttersControls from './roller-shutters-controls.vue'
 
 export default {
   data() {
@@ -144,8 +156,10 @@ export default {
     iconHeat2,
     iconHumidity,
     iconHotwater,
+    iconRollerShutters,
     iconInfo,
-    powerSettingsModal
+    powerSettingsModal,
+    rollerShuttersControls
   },
   computed: {
     // Some variables in $store.state we want to read
@@ -166,7 +180,8 @@ export default {
       'showHumidity',
       'anaviTemperature',
       'anaviHumidity',
-      'thermometerSwitch'
+      'thermometerSwitch',
+      'showRollerShutters'
     ]),
     powerSettingText() {
       const modes = {
@@ -197,9 +212,21 @@ export default {
     },
     targetTemperature() {
       return this.$store.getters.targetTemperature
+    },
+    showTemperatureControls() {
+      return this.selectedMode !== 'roller-shutters'
+
+    },
+    showRollerShuttersControls() {
+      return this.selectedMode === 'roller-shutters'
     }
   },
   methods: {
+    select(mode) {
+      if (this.selectedMode !== mode) {
+        this.$store.commit('selectMode', mode)
+      }
+    },
     openPowerModal(mode) {
       // First tap, only select
       if (this.selectedMode !== mode) {
