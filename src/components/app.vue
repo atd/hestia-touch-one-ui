@@ -77,7 +77,7 @@ html {
 }
 
 .color-roller-shutters {
-  color: #4C331E;
+  color: #835833;
 }
 
 .color-off {
