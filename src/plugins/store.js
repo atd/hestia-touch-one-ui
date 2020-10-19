@@ -479,7 +479,13 @@ function updateMode(state, mode) {
 }
 
 function updateRollerShutter(state, {label, height}) {
-  const position = Math.round(height * 100 / (ShutterDisplayHeight - 1))
+  let position = Math.round(height * 100 / (ShutterDisplayHeight - 1))
+
+  if (position <= 10) {
+    position = 0
+  } else if (position >= 90) {
+    position = 100
+  }
 
   client.publish(`ew/cmnd/${label}`, position.toString())
 }
