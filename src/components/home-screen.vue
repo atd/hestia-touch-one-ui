@@ -224,6 +224,8 @@ export default {
   methods: {
     select(mode) {
       if (this.selectedMode !== mode) {
+        this.$store.commit('addReturnToTimeout', { mode: this.selectedMode })
+
         this.$store.commit('selectMode', mode)
       }
     },

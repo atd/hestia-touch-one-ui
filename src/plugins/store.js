@@ -11,6 +11,7 @@ const anaviHumidityTopic    = `${ANAVI_MQTT_PREFIX}/air/humidity`
 const thermometerSwitchTopic = 'hestia/local/stat/thermometerswitch'
 
 const ShutterDisplayHeight = 210 // The height of the shutter divs in pixels
+const ReturnToTimeout = 60000
 
 Vue.use(Vuex)
 
@@ -102,6 +103,10 @@ export default new Vuex.Store({
       left: 0,
       middle: 0,
       right: 0
+    },
+    returnTo: {
+      mode: '',
+      timeout: null
     }
   },
   getters: {
@@ -115,7 +120,8 @@ export default new Vuex.Store({
     selectPowerSetting,
     toggleInfoScreen,
     selectThermometer,
-    updateRollerShutter
+    updateRollerShutter,
+    addReturnToTimeout
   }
 })
 
@@ -512,4 +518,21 @@ function updateRollerShutter(state, {label, height}) {
   }
 
   client.publish(`ew/cmnd/${label}`, position.toString())
+}
+
+function addReturnToTimeout(state, args = {}) {
+  const timeout = state.returnTo.timeout
+  const mode = args.mode
+
+  if (timeout) {
+    clearTimeout(timeout)
+  }
+
+  if (mode) {
+    state.returnTo.mode = mode
+  }
+
+  state.returnTo.timeout = setTimeout(() => {
+    state.selectedMode = state.returnTo.mode
+  }, ReturnToTimeout);
 }

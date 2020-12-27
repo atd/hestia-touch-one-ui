@@ -41,6 +41,8 @@ export default {
       // so we have to set the trigger in both divs
       event.stopPropagation()
 
+      this.$store.commit('addReturnToTimeout')
+
       const label = event.target.getAttribute('data-label') ||
                     event.target.parentElement.getAttribute('data-label')
       const height = event.layerY
