@@ -67,6 +67,7 @@
         @click="select('roller-shutters')">
         <icon-roller-shutters size="70%" />
       </div>
+      <clock />
       <div class="mode-btn info color-off" @click="toggleInfoScreen">
         <icon-info size="75%" />
       </div>
@@ -136,6 +137,7 @@ import iconFan from './icon-fan.vue'
 import iconHumidity from './icon-humidity.vue'
 import iconHotwater from './icon-hotwater.vue'
 import iconRollerShutters from './icon-roller-shutters.vue'
+import clock from './clock.vue'
 import iconInfo from './icon-info.vue'
 import rollerShuttersControls from './roller-shutters-controls.vue'
 
@@ -157,6 +159,7 @@ export default {
     iconHumidity,
     iconHotwater,
     iconRollerShutters,
+    clock,
     iconInfo,
     powerSettingsModal,
     rollerShuttersControls
