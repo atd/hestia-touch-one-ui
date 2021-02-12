@@ -3,7 +3,7 @@
   Improvement suggestions by https://github.com/jaythomas
 -->
 <template>
-  <div class="clock">
+  <div class="clock unselectable">
     <span v-text="hours"></span>:<span v-text="minutes"></span>
   </div>
 </template>
